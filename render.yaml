@@ -1,0 +1,32 @@
+# Render Blueprint for LilyAiApi.
+#
+# Why this exists: the SQLite DB (provider API keys, settings) lives in
+# /app/server/data. Render containers have an ephemeral filesystem, so without
+# a persistent disk every restart/redeploy wipes the DB and saved keys vanish.
+# Persistent disks require a paid plan (starter or higher); they are not
+# available on the free plan.
+services:
+  - type: web
+    name: lilyaiapi
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/ping
+    disk:
+      name: lilyaiapi-data
+      mountPath: /app/server/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # REQUIRED. Set once in the Render dashboard (64 hex chars, e.g.
+      # `openssl rand -hex 32`) and never change it: saved keys are encrypted
+      # with it and can't be decrypted if it changes between deploys.
+      - key: ENCRYPTION_KEY
+        sync: false
+      # Fallback for hosts with no persistent disk: restore-on-boot + periodic
+      # upload of an encrypted DB backup to an HTTP(S) endpoint you control.
+      # Uncomment and set the values in the dashboard if you can't use a disk.
+      # - key: FREEAPI_DB_BACKUP_URL
+      #   sync: false
+      # - key: FREEAPI_DB_BACKUP_TOKEN
+      #   sync: false
