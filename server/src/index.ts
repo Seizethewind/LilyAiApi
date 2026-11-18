@@ -11,6 +11,7 @@ import { startCustomModelSync } from './services/custom-model-sync.js';
 import { startBuiltinModelDiscovery } from './services/builtin-model-discovery.js';
 import { installProcessSafetyNet } from './lib/process-safety-net.js';
 import { NodeScheduler } from './lib/scheduler.js';
+import { startSelfPing } from './lib/self-ping.js';
 import { loadConfig } from './lib/config.js';
 import { applyDeclarativeConfigFromEnv } from './services/declarative-config.js';
 import { restoreDbBackupIfNeeded, startDbBackupPump } from './lib/db-backup.js';
@@ -90,6 +91,7 @@ async function main() {
     startBackupScheduler(scheduler);
     startCustomModelSync(getDb(), scheduler);
     startBuiltinModelDiscovery(getDb(), scheduler);
+    startSelfPing(scheduler);
 
     // Post-sleep recovery: while the host was suspended (laptop lid, VM
     // pause) timers and keep-alive sockets froze, so the first requests after
