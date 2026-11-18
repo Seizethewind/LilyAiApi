@@ -5,7 +5,7 @@ import type { Scheduler } from './scheduler.js';
 // doesn't count: the ping has to go to the public URL so it traverses Render's
 // proxy. Render injects RENDER_EXTERNAL_URL on web services; SELF_PING_URL
 // overrides it for other hosts. With neither set, nothing is started.
-const DEFAULT_INTERVAL_MS = 10 * 60 * 1000;
+const DEFAULT_INTERVAL_MS = 100 * 1000;
 const MIN_INTERVAL_MS = 60 * 1000;
 const PING_TIMEOUT_MS = 15_000;
 

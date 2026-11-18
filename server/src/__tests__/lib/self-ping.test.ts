@@ -14,9 +14,9 @@ describe('self-ping', () => {
     expect(selfPingUrl({ RENDER_EXTERNAL_URL: 'https://a.onrender.com', SELF_PING: '0' })).toBeNull();
   });
 
-  it('defaults to 10 minutes and ignores intervals under 60s', () => {
-    expect(selfPingIntervalMs({})).toBe(600_000);
-    expect(selfPingIntervalMs({ SELF_PING_INTERVAL_MS: '5000' })).toBe(600_000);
+  it('defaults to 100 seconds and ignores intervals under 60s', () => {
+    expect(selfPingIntervalMs({})).toBe(100_000);
+    expect(selfPingIntervalMs({ SELF_PING_INTERVAL_MS: '5000' })).toBe(100_000);
     expect(selfPingIntervalMs({ SELF_PING_INTERVAL_MS: '120000' })).toBe(120_000);
   });
 
@@ -25,7 +25,7 @@ describe('self-ping', () => {
     const scheduler = { every: vi.fn((_ms: number, fn: () => void) => { tick = fn; return () => {}; }), after: vi.fn() } as unknown as Scheduler;
     const fetchImpl = vi.fn(async () => new Response('ok', { status: 200 })) as unknown as typeof fetch;
     startSelfPing(scheduler, { RENDER_EXTERNAL_URL: 'https://a.onrender.com' }, fetchImpl);
-    expect(scheduler.every).toHaveBeenCalledWith(600_000, expect.any(Function), { name: 'self-ping' });
+    expect(scheduler.every).toHaveBeenCalledWith(100_000, expect.any(Function), { name: 'self-ping' });
     tick();
     await Promise.resolve();
     expect(fetchImpl).toHaveBeenCalledWith('https://a.onrender.com/api/ping', expect.anything());
