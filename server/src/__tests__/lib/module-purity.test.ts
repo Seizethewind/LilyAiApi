@@ -43,6 +43,8 @@ const PURE_MODULES = [
   'provider-identity.ts',
   'provider-size-parser.ts',
   'retry-hint.ts',
+  // Keep-awake ping; env, fetch and the scheduler are all injected.
+  'self-ping.ts',
   // Search platform list; the provider list, keys route and search service import it.
   'search-platforms.ts',
   // SSE keep-alive helper (#1642); env is injected, the response is a callback.
