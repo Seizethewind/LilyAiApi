@@ -41,10 +41,13 @@ async function main() {
 
   const scheduler = new NodeScheduler();
 
-  if (config.dbPath) {
-    await restoreDbBackupIfNeeded(config.dbPath);
-  } else {
-    await restoreDbBackupIfNeeded();
+  // A bad backup token, an unreachable target or a corrupt backup must not
+  // keep the server from booting (it would crash-loop on the host). Log it and
+  // start with a fresh database instead.
+  try {
+    await restoreDbBackupIfNeeded(config.dbPath ?? undefined);
+  } catch (err: any) {
+    console.error(`[db-backup] restore skipped, starting without it: ${err?.message ?? err}`);
   }
   initDb(config.dbPath ?? undefined);
   applyDeclarativeConfigFromEnv();
